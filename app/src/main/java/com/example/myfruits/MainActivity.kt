@@ -2,58 +2,57 @@ package com.example.myfruits
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Looper
-import androidx.viewpager.widget.ViewPager
+import android.util.Log
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.myfruits.retrofit.ApiService
 import kotlinx.android.synthetic.main.activity_main.*
-import java.util.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
-    private var currentPage = 0
-    private var numPages = 0
-
-
+    private val TAG: String = "MainActivity"
+    val data = ArrayList<MainModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val images = listOf(
-            "https://www.pexels.com/id-id/foto/blueberry-dan-stroberi-dalam-mangkuk-keramik-putih-1120575/",
-            "https://www.pexels.com/id-id/foto/orang-yang-memegang-buah-bulat-kuning-5871215/",
-             "https://www.pexels.com/id-id/foto/tiga-buah-apel-209339/",
-        )
-
-        createSlider(images)
+        getDataFromApi()
     }
-    private fun createSlider(string: List<String>) {
 
-            vpSlider.adapter = SliderAdapter(this, string)
-            indicator.setViewPager(vpSlider)
-            val density = resources.displayMetrics.density
-            //Set circle indicator radius
-            indicator.radius = 5 * density
-            numPages = string.size
-            // Auto getData of viewpager
-            val update = Runnable {
-                if (currentPage === numPages) {
-                    currentPage = 0
+    private fun getDataFromApi() {
+        ApiService.endpoint.getData().enqueue(object : Callback<List<MainModel>> {
+            override fun onResponse(
+                call: Call<List<MainModel>>,
+                response: Response<List<MainModel>>
+            ) {
+                if(response.isSuccessful) {
+                    Log.d("checking", response.isSuccessful.toString())
+                    data.addAll(response.body()!!)
+                    list.layoutManager = LinearLayoutManager(this@MainActivity)
+                    list.adapter = Adaptar(data) {
+                        Toast.makeText(this@MainActivity, "you clicked ${it.title}", Toast.LENGTH_SHORT).show()
+                    }
+                    list.adapter?.notifyDataSetChanged()
                 }
-                vpSlider.setCurrentItem(currentPage++, true)
             }
-            val swipeTimer = Timer()
-            swipeTimer.schedule(object : TimerTask() {
-                override fun run() {
-                    android.os.Handler(Looper.getMainLooper()).post(update)
-                }
-            }, 5000, 5000)
-            // Pager listener over indicator
-            indicator.setOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-                override fun onPageSelected(position: Int) {
-                    currentPage = position
-                }
 
-                override fun onPageScrolled(pos: Int, arg1: Float, arg2: Int) {}
-                override fun onPageScrollStateChanged(pos: Int) {}
-            })
-        }
+            override fun onFailure(call: Call<List<MainModel>>, t: Throwable) {
+                printlog(t.message.toString())
+                Log.d("checking", t.message.toString())
+            }
+
+        })
+
     }
+
+    private fun printlog(message: String) {
+        Log.d(TAG, message)
+    }
+
+    override fun onStart() {
+        super.onStart()
+    }
+}
+

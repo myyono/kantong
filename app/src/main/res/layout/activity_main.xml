@@ -12,24 +12,6 @@
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
 
-
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/vpSlider"
-            android:layout_width="match_parent"
-            android:layout_height="220dp"
-            />
-        <com.viewpagerindicator.CirclePageIndicator
-            android:id="@+id/indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:padding="10dip"
-            app:centered="false"
-            app:fillColor="@color/colorPrimary"
-            app:pageColor="#999999"
-            app:snap="false"
-            />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,7 +22,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvRecipe"
+        android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
