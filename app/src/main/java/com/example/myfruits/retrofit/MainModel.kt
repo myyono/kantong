@@ -1,4 +1,4 @@
-package com.example.myfruits
+package com.example.myfruits.retrofit
 
  data class MainModel (
      val id :String,
